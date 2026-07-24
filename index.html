@@ -227,7 +227,7 @@
 
             // Fórmulas matemáticas solicitadas
             const form2x = (alto * 1.5) - (medio * 0.5) - (baixo * 2);
-            const form15x = (alto * 1) + (medio * 1) - (baixo - 2);
+            const form15x = (alto * 1) + (medio * 1) - (baixo * 2);
 
             const registro = {
                 id: editId ? editId : Date.now().toString(),
@@ -285,7 +285,7 @@
                         <p><strong>Fórmula 2x:</strong> (alto × 1,5) - (médio × 0,5) - (baixo × 2)</p>
                         <p>Resultado: <strong>${reg.form2x.toFixed(2)}</strong></p>
                         <hr style="border: 0; border-top: 1px dashed #ccc; margin: 8px 0;">
-                        <p><strong>Fórmula 1.5x:</strong> (alto × 1) + (médio × 1) - (baixo - 2)</p>
+                        <p><strong>Fórmula 1.5x:</strong> (alto × 1) + (médio × 1) - (baixo × 2)</p>
                         <p>Resultado: <strong>${reg.form15x.toFixed(2)}</strong></p>
                     </div>
                     <button class="btn-editar" onclick="editarRegistro('${reg.id}')">✏️ Editar Registro</button>
