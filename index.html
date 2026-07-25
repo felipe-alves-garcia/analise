@@ -63,6 +63,378 @@
             cursor: pointer;
         }
 
+        .input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-step {
+            background-color: #ecf0f1;
+            border: 1px solid var(--borda);
+            color: var(--texto);
+            font-size: 18px;
+            width: 40px;
+            height: 40px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .btn-step:hover {
+            background-color: #bdc3c7;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--borda);
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        .botoes {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            color: white;
+            transition: opacity 0.2s;
+            font-size: 14px;
+        }
+
+        button:hover {
+            opacity: 0.8;
+        }
+
+        #btn-salvar {
+            background-color: #3498db;
+            flex: 2;
+        }
+
+        #btn-limpar {
+            background-color: #95a5a6;
+            flex: 1;
+        }
+
+        .cards-container {
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border-left: 6px solid #ccc;
+            position: relative;
+        }
+
+        .card.vermelho { border-left-color: var(--vermelho); }
+        .card.verde { border-left-color: var(--verde); }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid var(--borda);
+        }
+
+        .tag {
+            padding: 3px 8px;
+            border-radius: 12px;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: capitalize;
+        }
+
+        .tag.vermelho { background-color: var(--vermelho); }
+        .tag.verde { background-color: var(--verde); }
+
+        .card-content p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+
+        .card-content strong {
+            color: #2c3e50;
+        }
+
+        .divider {
+            border: 0; 
+            border-top: 1px dashed #ccc; 
+            margin: 8px 0;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-editar {
+            background-color: #f39c12;
+            flex: 1;
+        }
+
+        .btn-excluir {
+            background-color: #e74c3c;
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Calculadora de Valores</h1>
+
+    <div class="container">
+        <form id="formulario">
+            <input type="hidden" id="edit-id" value="">
+
+            <div class="form-group">
+                <label>Tipo:</label>
+                <div class="radio-group">
+                    <label>
+                        <input type="radio" name="tipo" value="vermelho" checked> Vermelho
+                    </label>
+                    <label>
+                        <input type="radio" name="tipo" value="verde"> Verde
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="alto">Alto:</label>
+                <div class="input-wrapper">
+                    <button type="button" class="btn-step" onclick="alterarValor('alto', -1)">-</button>
+                    <input type="number" id="alto" step="any" required>
+                    <button type="button" class="btn-step" onclick="alterarValor('alto', 1)">+</button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="medio">Médio:</label>
+                <div class="input-wrapper">
+                    <button type="button" class="btn-step" onclick="alterarValor('medio', -1)">-</button>
+                    <input type="number" id="medio" step="any" required>
+                    <button type="button" class="btn-step" onclick="alterarValor('medio', 1)">+</button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="baixo">Baixo:</label>
+                <div class="input-wrapper">
+                    <button type="button" class="btn-step" onclick="alterarValor('baixo', -1)">-</button>
+                    <input type="number" id="baixo" step="any" required>
+                    <button type="button" class="btn-step" onclick="alterarValor('baixo', 1)">+</button>
+                </div>
+            </div>
+
+            <div class="botoes">
+                <button type="submit" id="btn-salvar">Calcular e Salvar</button>
+                <button type="button" id="btn-limpar" onclick="limparLocalStorage()">Limpar Tudo</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="cards-container" id="cards-container">
+        </div>
+
+    <script>
+        // Mudei a chave para evitar conflitos com a versão anterior do seu navegador
+        const STORAGE_KEY = 'registrosCalculosV3';
+
+        document.addEventListener('DOMContentLoaded', renderizarCards);
+
+        function alterarValor(inputId, delta) {
+            const input = document.getElementById(inputId);
+            let valorAtual = parseFloat(input.value) || 0;
+            input.value = valorAtual + delta;
+        }
+
+        document.getElementById('formulario').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const tipo = document.querySelector('input[name="tipo"]:checked').value;
+            const alto = parseFloat(document.getElementById('alto').value);
+            const medio = parseFloat(document.getElementById('medio').value);
+            const baixo = parseFloat(document.getElementById('baixo').value);
+            const editId = document.getElementById('edit-id').value;
+
+            // Fórmulas matemáticas
+            const form2x = (alto * 1.5) - (medio * 0.5) - (baixo * 2);
+            
+            // FÓRMULA CORRIGIDA: (alto x 1) + (medio x 1) - (baixo x 2)
+            const form15x = (alto * 1) + (medio * 1) - (baixo * 2);
+            
+            const form4x = (alto * 2) - (medio * 2) - (baixo * 2);
+
+            const registro = {
+                id: editId ? editId : Date.now().toString(),
+                tipo,
+                alto,
+                medio,
+                baixo,
+                form2x,
+                form15x,
+                form4x
+            };
+
+            salvarRegistro(registro);
+            
+            this.reset();
+            document.getElementById('edit-id').value = '';
+            document.getElementById('btn-salvar').textContent = 'Calcular e Salvar';
+            document.querySelector('input[value="vermelho"]').checked = true;
+        });
+
+        function salvarRegistro(novoRegistro) {
+            let registros = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+            const index = registros.findIndex(r => r.id === novoRegistro.id);
+            
+            if (index !== -1) {
+                registros[index] = novoRegistro;
+            } else {
+                registros.push(novoRegistro);
+            }
+
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(registros));
+            renderizarCards();
+        }
+
+        function renderizarCards() {
+            const container = document.getElementById('cards-container');
+            const registros = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+            
+            container.innerHTML = '';
+
+            registros.forEach(reg => {
+                const div = document.createElement('div');
+                div.className = `card ${reg.tipo}`;
+                div.innerHTML = `
+                    <div class="card-header">
+                        <span class="tag ${reg.tipo}">${reg.tipo}</span>
+                        <small>A: ${reg.alto} | M: ${reg.medio} | B: ${reg.baixo}</small>
+                    </div>
+                    <div class="card-content">
+                        <p><strong>Fórmula 2x:</strong> (A × 1.5) - (M × 0.5) - (B × 2)</p>
+                        <p>Resultado: <strong>${reg.form2x.toFixed(2)}</strong></p>
+                        
+                        <hr class="divider">
+                        
+                        <p><strong>Fórmula 1.5x:</strong> (A × 1) + (M × 1) - (B × 2)</p>
+                        <p>Resultado: <strong>${reg.form15x.toFixed(2)}</strong></p>
+
+                        <hr class="divider">
+
+                        <p><strong>Fórmula 4x:</strong> (A × 2) - (M × 2) - (B × 2)</p>
+                        <p>Resultado: <strong>${reg.form4x.toFixed(2)}</strong></p>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn-editar" onclick="editarRegistro('${reg.id}')">✏️ Editar</button>
+                        <button class="btn-excluir" onclick="excluirRegistro('${reg.id}')">🗑️ Excluir</button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function editarRegistro(id) {
+            const registros = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+            const registro = registros.find(r => r.id === id);
+
+            if (registro) {
+                document.querySelector(`input[value="${registro.tipo}"]`).checked = true;
+                document.getElementById('alto').value = registro.alto;
+                document.getElementById('medio').value = registro.medio;
+                document.getElementById('baixo').value = registro.baixo;
+                document.getElementById('edit-id').value = registro.id; 
+
+                document.getElementById('btn-salvar').textContent = 'Atualizar Registro';
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function excluirRegistro(id) {
+            if(confirm("Tem certeza que deseja excluir este registro específico?")) {
+                let registros = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+                registros = registros.filter(r => r.id !== id); 
+                
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(registros));
+                renderizarCards();
+
+                if (document.getElementById('edit-id').value === id) {
+                    document.getElementById('formulario').reset();
+                    document.getElementById('edit-id').value = '';
+                    document.getElementById('btn-salvar').textContent = 'Calcular e Salvar';
+                }
+            }
+        }
+
+        function limparLocalStorage() {
+            if(confirm("Tem certeza que deseja apagar TODOS os registros salvos?")) {
+                localStorage.removeItem(STORAGE_KEY);
+                renderizarCards();
+                
+                document.getElementById('formulario').reset();
+                document.getElementById('edit-id').value = '';
+                document.getElementById('btn-salvar').textContent = 'Calcular e Salvar';
+                document.querySelector('input[value="vermelho"]').checked = true;
+            }
+        }
+    </script>
+</body>
+</html>
+
+```
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 500px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 15px;
+        }
+
+        .radio-group label {
+            font-weight: normal;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+        }
+
         /* Container para o input e os botões de + e - */
         .input-wrapper {
             display: flex;
