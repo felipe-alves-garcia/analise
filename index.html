@@ -27,6 +27,7 @@
         h1 {
             color: #2c3e50;
             margin-bottom: 20px;
+            text-align: center;
         }
 
         .container {
@@ -62,6 +63,32 @@
             cursor: pointer;
         }
 
+        /* Container para o input e os botões de + e - */
+        .input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-step {
+            background-color: #ecf0f1;
+            border: 1px solid var(--borda);
+            color: var(--texto);
+            font-size: 18px;
+            width: 40px;
+            height: 40px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .btn-step:hover {
+            background-color: #bdc3c7;
+        }
+
         input[type="number"] {
             width: 100%;
             padding: 10px;
@@ -69,6 +96,7 @@
             border-radius: 5px;
             box-sizing: border-box;
             font-size: 16px;
+            text-align: center;
         }
 
         .botoes {
@@ -85,7 +113,6 @@
             font-weight: bold;
             color: white;
             transition: opacity 0.2s;
-            flex: 1;
             font-size: 14px;
         }
 
@@ -95,10 +122,12 @@
 
         #btn-salvar {
             background-color: #3498db;
+            flex: 2;
         }
 
         #btn-limpar {
             background-color: #95a5a6;
+            flex: 1;
         }
 
         .cards-container {
@@ -118,13 +147,8 @@
             position: relative;
         }
 
-        .card.vermelho {
-            border-left-color: var(--vermelho);
-        }
-
-        .card.verde {
-            border-left-color: var(--verde);
-        }
+        .card.vermelho { border-left-color: var(--vermelho); }
+        .card.verde { border-left-color: var(--verde); }
 
         .card-header {
             display: flex;
@@ -156,10 +180,26 @@
             color: #2c3e50;
         }
 
+        .divider {
+            border: 0; 
+            border-top: 1px dashed #ccc; 
+            margin: 8px 0;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
         .btn-editar {
             background-color: #f39c12;
-            margin-top: 10px;
-            width: 100%;
+            flex: 1;
+        }
+
+        .btn-excluir {
+            background-color: #e74c3c;
+            flex: 1;
         }
     </style>
 </head>
@@ -185,22 +225,34 @@
 
             <div class="form-group">
                 <label for="alto">Alto:</label>
-                <input type="number" id="alto" step="any" required>
+                <div class="input-wrapper">
+                    <button type="button" class="btn-step" onclick="alterarValor('alto', -1)">-</button>
+                    <input type="number" id="alto" step="any" required>
+                    <button type="button" class="btn-step" onclick="alterarValor('alto', 1)">+</button>
+                </div>
             </div>
 
             <div class="form-group">
                 <label for="medio">Médio:</label>
-                <input type="number" id="medio" step="any" required>
+                <div class="input-wrapper">
+                    <button type="button" class="btn-step" onclick="alterarValor('medio', -1)">-</button>
+                    <input type="number" id="medio" step="any" required>
+                    <button type="button" class="btn-step" onclick="alterarValor('medio', 1)">+</button>
+                </div>
             </div>
 
             <div class="form-group">
                 <label for="baixo">Baixo:</label>
-                <input type="number" id="baixo" step="any" required>
+                <div class="input-wrapper">
+                    <button type="button" class="btn-step" onclick="alterarValor('baixo', -1)">-</button>
+                    <input type="number" id="baixo" step="any" required>
+                    <button type="button" class="btn-step" onclick="alterarValor('baixo', 1)">+</button>
+                </div>
             </div>
 
             <div class="botoes">
                 <button type="submit" id="btn-salvar">Calcular e Salvar</button>
-                <button type="button" id="btn-limpar" onclick="limparLocalStorage()">Limpar LocalStorage</button>
+                <button type="button" id="btn-limpar" onclick="limparLocalStorage()">Limpar Tudo</button>
             </div>
         </form>
     </div>
@@ -209,10 +261,17 @@
         </div>
 
     <script>
-        const STORAGE_KEY = 'registrosCalculos';
+        const STORAGE_KEY = 'registrosCalculosV2';
 
         // Carrega os registros ao iniciar a página
         document.addEventListener('DOMContentLoaded', renderizarCards);
+
+        // Função para aumentar ou diminuir valor do input clicando nos botões
+        function alterarValor(inputId, delta) {
+            const input = document.getElementById(inputId);
+            let valorAtual = parseFloat(input.value) || 0;
+            input.value = valorAtual + delta;
+        }
 
         // Lida com o envio do formulário (Criação e Edição)
         document.getElementById('formulario').addEventListener('submit', function(e) {
@@ -225,18 +284,24 @@
             const baixo = parseFloat(document.getElementById('baixo').value);
             const editId = document.getElementById('edit-id').value;
 
-            // Fórmulas matemáticas solicitadas
+            // Fórmulas matemáticas calculadas
             const form2x = (alto * 1.5) - (medio * 0.5) - (baixo * 2);
-            const form15x = (alto * 1) + (medio * 1) - (baixo * 2);
+            
+            // Fórmula 1.5x Corrigida
+            const form15x = (alto * 1.5) + (medio * 1) - (baixo * 2);
+            
+            // Nova Fórmula 4x
+            const form4x = (alto * 2) - (medio * 2) - (baixo * 2);
 
             const registro = {
-                id: editId ? editId : Date.now().toString(),
+                id: editId ? editId : Date.now().toString(), // Garante que o ID seja uma string
                 tipo,
                 alto,
                 medio,
                 baixo,
                 form2x,
-                form15x
+                form15x,
+                form4x
             };
 
             salvarRegistro(registro);
@@ -251,7 +316,6 @@
         // Função para salvar no LocalStorage
         function salvarRegistro(novoRegistro) {
             let registros = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-
             const index = registros.findIndex(r => r.id === novoRegistro.id);
             
             if (index !== -1) {
@@ -279,22 +343,32 @@
                 div.innerHTML = `
                     <div class="card-header">
                         <span class="tag ${reg.tipo}">${reg.tipo}</span>
-                        <small>Entradas: A(${reg.alto}) | M(${reg.medio}) | B(${reg.baixo})</small>
+                        <small>A: ${reg.alto} | M: ${reg.medio} | B: ${reg.baixo}</small>
                     </div>
                     <div class="card-content">
-                        <p><strong>Fórmula 2x:</strong> (alto × 1,5) - (médio × 0,5) - (baixo × 2)</p>
+                        <p><strong>Fórmula 2x:</strong> (A × 1.5) - (M × 0.5) - (B × 2)</p>
                         <p>Resultado: <strong>${reg.form2x.toFixed(2)}</strong></p>
-                        <hr style="border: 0; border-top: 1px dashed #ccc; margin: 8px 0;">
-                        <p><strong>Fórmula 1.5x:</strong> (alto × 1) + (médio × 1) - (baixo × 2)</p>
+                        
+                        <hr class="divider">
+                        
+                        <p><strong>Fórmula 1.5x:</strong> (A × 1.5) + (M × 1) - (B × 2)</p>
                         <p>Resultado: <strong>${reg.form15x.toFixed(2)}</strong></p>
+
+                        <hr class="divider">
+
+                        <p><strong>Fórmula 4x:</strong> (A × 2) - (M × 2) - (B × 2)</p>
+                        <p>Resultado: <strong>${reg.form4x.toFixed(2)}</strong></p>
                     </div>
-                    <button class="btn-editar" onclick="editarRegistro('${reg.id}')">✏️ Editar Registro</button>
+                    <div class="card-actions">
+                        <button class="btn-editar" onclick="editarRegistro('${reg.id}')">✏️ Editar</button>
+                        <button class="btn-excluir" onclick="excluirRegistro('${reg.id}')">🗑️ Excluir</button>
+                    </div>
                 `;
                 container.appendChild(div);
             });
         }
 
-        // Função para jogar os dados do card de volta para o input
+        // Função para editar
         function editarRegistro(id) {
             const registros = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
             const registro = registros.find(r => r.id === id);
@@ -304,20 +378,38 @@
                 document.getElementById('alto').value = registro.alto;
                 document.getElementById('medio').value = registro.medio;
                 document.getElementById('baixo').value = registro.baixo;
-                document.getElementById('edit-id').value = registro.id;
+                document.getElementById('edit-id').value = registro.id; // Passa o ID do card para o input oculto
 
                 document.getElementById('btn-salvar').textContent = 'Atualizar Registro';
-                window.scrollTo(0, 0); // Sobe a tela para o formulário
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        // Função para excluir apenas UM card
+        function excluirRegistro(id) {
+            if(confirm("Tem certeza que deseja excluir este registro específico?")) {
+                let registros = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+                // Filtra removendo o ID escolhido
+                registros = registros.filter(r => r.id !== id); 
+                
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(registros));
+                renderizarCards();
+
+                // Se o usuário estiver editando o card que acabou de excluir, limpa o form
+                if (document.getElementById('edit-id').value === id) {
+                    document.getElementById('formulario').reset();
+                    document.getElementById('edit-id').value = '';
+                    document.getElementById('btn-salvar').textContent = 'Calcular e Salvar';
+                }
             }
         }
 
         // Função para limpar todo o localStorage
         function limparLocalStorage() {
-            if(confirm("Tem certeza que deseja apagar todos os registros salvos?")) {
+            if(confirm("Tem certeza que deseja apagar TODOS os registros salvos?")) {
                 localStorage.removeItem(STORAGE_KEY);
                 renderizarCards();
                 
-                // Reseta o form caso esteja editando algo
                 document.getElementById('formulario').reset();
                 document.getElementById('edit-id').value = '';
                 document.getElementById('btn-salvar').textContent = 'Calcular e Salvar';
