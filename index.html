@@ -472,7 +472,7 @@
     <script>
         // Chaves do LocalStorage
         const KEY_CALC1 = 'registrosCalculadora1_v6';
-        const KEY_CALC2 = 'registrosCalculadora2_v1';
+        const KEY_CALC2 = 'registrosCalculadora2_v2'; // Atualizado para suportar a nova matriz de fórmulas sem conflitos
 
         // Variável de estado para a lista temporária da Calculadora 2
         let calc2ValoresTemp = [];
@@ -628,8 +628,14 @@
             const obs = document.getElementById('c2-obs').value;
             const editId = document.getElementById('c2-edit-id').value;
 
-            // Multiplicadores solicitados: até 15, depois 20, 30, 50, 100
-            const multiplicadores = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 20, 30, 50, 100];
+            // ================= NOVIDADE: Matriz de multiplicadores expandida =================
+            const multiplicadores = [
+                1.2, 1.5, 
+                2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 
+                20, 30, 50, 100, 
+                150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000
+            ];
+            
             const resultados = [];
 
             // Processa as Fórmulas para cada Múltiplo (M)
