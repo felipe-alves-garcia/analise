@@ -3,41 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Fórmulas</title>
+    <title>Sistema de Calculadoras</title>
     <style>
         :root {
+            /* Cores */
             --vermelho: #e74c3c;
             --verde: #2ecc71;
-            --fundo: #f8f9fa;
-            --texto: #333;
-            --borda: #ddd;
+            --roxo: #9b59b6;
+            --azul: #3498db;
+            --rosa: #fd79a8;
+            
+            --fundo: #f4f6f9;
+            --texto: #2d3436;
+            --borda: #dfe6e9;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--fundo);
             color: var(--texto);
-            margin: 0;
-            padding: 20px;
             display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* Sistema de Abas */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            background-color: #ecf0f1;
+            color: #7f8c8d;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn:hover {
+            background-color: #bdc3c7;
+        }
+
+        .tab-btn.active {
+            background-color: #2c3e50;
+            color: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .tab-content {
+            display: none;
+            width: 100%;
+            max-width: 600px;
             flex-direction: column;
             align-items: center;
         }
 
-        h1 {
-            color: #2c3e50;
-            margin-bottom: 20px;
-            text-align: center;
+        .tab-content.active {
+            display: flex;
         }
 
+        /* Container Padrão */
         .container {
             background: white;
-            padding: 20px 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
             width: 100%;
-            max-width: 500px;
             margin-bottom: 30px;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            color: #2c3e50;
+            text-align: center;
+            font-size: 22px;
         }
 
         .form-group {
@@ -46,13 +101,16 @@
 
         label {
             display: block;
-            font-weight: bold;
-            margin-bottom: 5px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
         }
 
+        /* Radio Buttons de Cores */
         .radio-group {
             display: flex;
-            gap: 15px;
+            flex-wrap: wrap;
+            gap: 12px;
         }
 
         .radio-group label {
@@ -61,81 +119,151 @@
             align-items: center;
             gap: 5px;
             cursor: pointer;
+            background: #f8f9fa;
+            padding: 6px 12px;
+            border-radius: 20px;
+            border: 1px solid var(--borda);
+            transition: all 0.2s;
+        }
+
+        .radio-group label:hover {
+            background: #eee;
+        }
+
+        .cor-bolinha {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .bg-vermelho { background-color: var(--vermelho); }
+        .bg-verde { background-color: var(--verde); }
+        .bg-roxo { background-color: var(--roxo); }
+        .bg-azul { background-color: var(--azul); }
+        .bg-rosa { background-color: var(--rosa); }
+
+        /* Inputs */
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--borda);
+            border-radius: 6px;
+            font-size: 15px;
+            transition: border-color 0.2s;
+        }
+
+        input[type="number"] {
+            text-align: center;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #3498db;
         }
 
         .input-wrapper {
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 8px;
         }
 
-        .btn-step {
+        .btn-step, .btn-add {
             background-color: #ecf0f1;
             border: 1px solid var(--borda);
             color: var(--texto);
             font-size: 18px;
-            width: 40px;
-            height: 40px;
-            border-radius: 5px;
+            font-weight: bold;
+            width: 45px;
+            height: 45px;
+            border-radius: 6px;
             cursor: pointer;
             display: flex;
             justify-content: center;
             align-items: center;
             flex-shrink: 0;
+            transition: background 0.2s;
         }
 
-        .btn-step:hover {
-            background-color: #bdc3c7;
-        }
-
-        /* Atualizado para incluir o campo de texto */
-        input[type="number"], input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid var(--borda);
-            border-radius: 5px;
-            box-sizing: border-box;
-            font-size: 16px;
-        }
-        
-        input[type="number"] {
-            text-align: center;
-        }
-
-        .botoes {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        button {
-            padding: 10px 15px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
+        .btn-add {
+            width: auto;
+            padding: 0 15px;
+            background-color: #2ecc71;
             color: white;
-            transition: opacity 0.2s;
+            border-color: #2ecc71;
             font-size: 14px;
         }
 
-        button:hover {
-            opacity: 0.8;
+        .btn-step:hover { background-color: #bdc3c7; }
+        .btn-add:hover { background-color: #27ae60; }
+
+        /* Botões Principais */
+        .botoes {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
         }
 
-        #btn-salvar {
-            background-color: #3498db;
+        button.main-btn {
+            padding: 12px 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            color: white;
             flex: 2;
+            font-size: 15px;
+            transition: opacity 0.2s;
         }
 
-        #btn-limpar {
+        button.clear-btn {
             background-color: #95a5a6;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 12px 15px;
+            font-weight: bold;
+            cursor: pointer;
             flex: 1;
         }
 
+        button.main-btn:hover, button.clear-btn:hover { opacity: 0.85; }
+        .bg-calc1 { background-color: #3498db; }
+        .bg-calc2 { background-color: #9b59b6; }
+
+        /* Lista Temporária Calc 2 */
+        .lista-temp {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            min-height: 50px;
+            border: 1px dashed #ccc;
+        }
+
+        .tag-valor {
+            background: #fff;
+            border: 1px solid #ccc;
+            padding: 4px 8px;
+            border-radius: 15px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .tag-valor span {
+            color: #e74c3c;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* Cards */
         .cards-container {
             width: 100%;
-            max-width: 500px;
             display: flex;
             flex-direction: column;
             gap: 15px;
@@ -144,26 +272,29 @@
         .card {
             background: white;
             border-radius: 8px;
-            padding: 15px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            border-left: 6px solid #ccc;
-            position: relative;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            border-left: 8px solid #ccc;
         }
 
+        /* Cores Dinâmicas dos Cards */
         .card.vermelho { border-left-color: var(--vermelho); }
         .card.verde { border-left-color: var(--verde); }
+        .card.roxo { border-left-color: var(--roxo); }
+        .card.azul { border-left-color: var(--azul); }
+        .card.rosa { border-left-color: var(--rosa); }
 
         .card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
-            padding-bottom: 5px;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
             border-bottom: 1px solid var(--borda);
         }
 
         .tag {
-            padding: 3px 8px;
+            padding: 4px 10px;
             border-radius: 12px;
             color: white;
             font-size: 12px;
@@ -173,29 +304,29 @@
 
         .tag.vermelho { background-color: var(--vermelho); }
         .tag.verde { background-color: var(--verde); }
-
-        .card-content p {
-            margin: 5px 0;
-            font-size: 14px;
-        }
-
-        .card-content strong {
-            color: #2c3e50;
-        }
+        .tag.roxo { background-color: var(--roxo); }
+        .tag.azul { background-color: var(--azul); }
+        .tag.rosa { background-color: var(--rosa); }
 
         .observacao-texto {
             background-color: #f1f2f6;
-            padding: 8px;
-            border-radius: 5px;
+            padding: 10px;
+            border-radius: 6px;
             font-style: italic;
             color: #57606f;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .card-content p {
+            margin: 6px 0;
+            font-size: 14px;
         }
 
         .divider {
             border: 0; 
             border-top: 1px dashed #ccc; 
-            margin: 8px 0;
+            margin: 10px 0;
         }
 
         .card-actions {
@@ -204,155 +335,211 @@
             margin-top: 15px;
         }
 
-        .btn-editar {
-            background-color: #f39c12;
-            flex: 1;
+        .btn-editar { background-color: #f39c12; color: white; border: none; padding: 8px; border-radius: 4px; cursor: pointer; flex: 1; font-weight: bold;}
+        .btn-excluir { background-color: #e74c3c; color: white; border: none; padding: 8px; border-radius: 4px; cursor: pointer; flex: 1; font-weight: bold;}
+        .btn-editar:hover, .btn-excluir:hover { opacity: 0.8; }
+
+        /* Grid de Resultados Calculadora 2 */
+        .resultados-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+            gap: 8px;
+            margin-top: 10px;
         }
 
-        .btn-excluir {
-            background-color: #e74c3c;
-            flex: 1;
+        .res-box {
+            background: #f8f9fa;
+            border: 1px solid #eee;
+            padding: 8px;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 13px;
         }
+        .res-box strong { display: block; color: #2c3e50; margin-bottom: 3px; font-size: 14px;}
+        .res-pos { color: #27ae60; font-weight: bold; }
+        .res-neg { color: #e74c3c; font-weight: bold; }
+        .res-zero { color: #7f8c8d; font-weight: bold; }
+
     </style>
 </head>
 <body>
 
-    <h1>Calculadora de Valores</h1>
-
-    <div class="container">
-        <form id="formulario">
-            <input type="hidden" id="edit-id" value="">
-
-            <div class="form-group">
-                <label>Tipo:</label>
-                <div class="radio-group">
-                    <label>
-                        <input type="radio" name="tipo" value="vermelho" checked> Vermelho
-                    </label>
-                    <label>
-                        <input type="radio" name="tipo" value="verde"> Verde
-                    </label>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="observacao">Observação / Nome (Opcional):</label>
-                <input type="text" id="observacao" placeholder="Digite uma anotação para este card...">
-            </div>
-
-            <div class="form-group">
-                <label for="alto">Alto:</label>
-                <div class="input-wrapper">
-                    <button type="button" class="btn-step" onclick="alterarValor('alto', -1)">-</button>
-                    <input type="number" id="alto" step="any" required>
-                    <button type="button" class="btn-step" onclick="alterarValor('alto', 1)">+</button>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="medio">Médio:</label>
-                <div class="input-wrapper">
-                    <button type="button" class="btn-step" onclick="alterarValor('medio', -1)">-</button>
-                    <input type="number" id="medio" step="any" required>
-                    <button type="button" class="btn-step" onclick="alterarValor('medio', 1)">+</button>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="baixo">Baixo:</label>
-                <div class="input-wrapper">
-                    <button type="button" class="btn-step" onclick="alterarValor('baixo', -1)">-</button>
-                    <input type="number" id="baixo" step="any" required>
-                    <button type="button" class="btn-step" onclick="alterarValor('baixo', 1)">+</button>
-                </div>
-            </div>
-
-            <div class="botoes">
-                <button type="submit" id="btn-salvar">Calcular e Salvar</button>
-                <button type="button" id="btn-limpar" onclick="limparLocalStorage()">Limpar Tudo</button>
-            </div>
-        </form>
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab(1)">Calculadora 1</button>
+        <button class="tab-btn" onclick="switchTab(2)">Calculadora 2 (Lista)</button>
     </div>
 
-    <div class="cards-container" id="cards-container">
+    <div id="aba1" class="tab-content active">
+        <div class="container">
+            <h2>Fórmulas Base</h2>
+            <form id="form-calc1">
+                <input type="hidden" id="c1-edit-id" value="">
+
+                <div class="form-group">
+                    <label>Cor / Tipo:</label>
+                    <div class="radio-group" id="c1-cores">
+                        <label><input type="radio" name="c1-tipo" value="vermelho" checked><span class="cor-bolinha bg-vermelho"></span> Vermelho</label>
+                        <label><input type="radio" name="c1-tipo" value="verde"><span class="cor-bolinha bg-verde"></span> Verde</label>
+                        <label><input type="radio" name="c1-tipo" value="roxo"><span class="cor-bolinha bg-roxo"></span> Roxo</label>
+                        <label><input type="radio" name="c1-tipo" value="azul"><span class="cor-bolinha bg-azul"></span> Azul</label>
+                        <label><input type="radio" name="c1-tipo" value="rosa"><span class="cor-bolinha bg-rosa"></span> Rosa</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="c1-obs">Observação / Nome (Opcional):</label>
+                    <input type="text" id="c1-obs" placeholder="Digite uma anotação...">
+                </div>
+
+                <div class="form-group">
+                    <label>Alto:</label>
+                    <div class="input-wrapper">
+                        <button type="button" class="btn-step" onclick="stepValue('c1-alto', -1)">-</button>
+                        <input type="number" id="c1-alto" step="any" required>
+                        <button type="button" class="btn-step" onclick="stepValue('c1-alto', 1)">+</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Médio:</label>
+                    <div class="input-wrapper">
+                        <button type="button" class="btn-step" onclick="stepValue('c1-medio', -1)">-</button>
+                        <input type="number" id="c1-medio" step="any" required>
+                        <button type="button" class="btn-step" onclick="stepValue('c1-medio', 1)">+</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Baixo:</label>
+                    <div class="input-wrapper">
+                        <button type="button" class="btn-step" onclick="stepValue('c1-baixo', -1)">-</button>
+                        <input type="number" id="c1-baixo" step="any" required>
+                        <button type="button" class="btn-step" onclick="stepValue('c1-baixo', 1)">+</button>
+                    </div>
+                </div>
+
+                <div class="botoes">
+                    <button type="submit" class="main-btn bg-calc1" id="c1-btn-salvar">Calcular e Salvar</button>
+                    <button type="button" class="clear-btn" onclick="limparStorage(1)">Limpar Tudo</button>
+                </div>
+            </form>
         </div>
+        <div class="cards-container" id="cards-container-1"></div>
+    </div>
+
+    <div id="aba2" class="tab-content">
+        <div class="container">
+            <h2>Múltiplos em Lote</h2>
+            <form id="form-calc2">
+                <input type="hidden" id="c2-edit-id" value="">
+
+                <div class="form-group">
+                    <label>Cor / Tipo:</label>
+                    <div class="radio-group" id="c2-cores">
+                        <label><input type="radio" name="c2-tipo" value="vermelho" checked><span class="cor-bolinha bg-vermelho"></span> Vermelho</label>
+                        <label><input type="radio" name="c2-tipo" value="verde"><span class="cor-bolinha bg-verde"></span> Verde</label>
+                        <label><input type="radio" name="c2-tipo" value="roxo"><span class="cor-bolinha bg-roxo"></span> Roxo</label>
+                        <label><input type="radio" name="c2-tipo" value="azul"><span class="cor-bolinha bg-azul"></span> Azul</label>
+                        <label><input type="radio" name="c2-tipo" value="rosa"><span class="cor-bolinha bg-rosa"></span> Rosa</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="c2-obs">Observação / Nome (Opcional):</label>
+                    <input type="text" id="c2-obs" placeholder="Digite uma anotação para a lista...">
+                </div>
+
+                <div class="form-group">
+                    <label>Adicionar Valor (ex: 2.50):</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="c2-input-valor" step="0.01" placeholder="0.00">
+                        <button type="button" class="btn-add" onclick="addValorC2()">Adicionar</button>
+                    </div>
+                    <div class="lista-temp" id="c2-lista-valores">
+                        <span style="color:#999; font-size:13px; margin:auto;">Nenhum valor adicionado ainda.</span>
+                    </div>
+                </div>
+
+                <div class="botoes">
+                    <button type="submit" class="main-btn bg-calc2" id="c2-btn-salvar">Calcular Fórmulas</button>
+                    <button type="button" class="clear-btn" onclick="limparStorage(2)">Limpar Tudo</button>
+                </div>
+            </form>
+        </div>
+        <div class="cards-container" id="cards-container-2"></div>
+    </div>
 
     <script>
-        // Atualizei para V4 para zerar os antigos e aceitar a nova estrutura com texto
-        const STORAGE_KEY = 'registrosCalculosV4';
+        // Chaves do LocalStorage
+        const KEY_CALC1 = 'registrosCalculadora1_v6';
+        const KEY_CALC2 = 'registrosCalculadora2_v1';
 
-        document.addEventListener('DOMContentLoaded', renderizarCards);
+        // Variável de estado para a lista temporária da Calculadora 2
+        let calc2ValoresTemp = [];
 
-        function alterarValor(inputId, delta) {
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', () => {
+            renderizarC1();
+            renderizarC2();
+        });
+
+        // Alternador de Abas
+        function switchTab(tabIndex) {
+            document.querySelectorAll('.tab-btn').forEach((btn, idx) => {
+                btn.classList.toggle('active', idx + 1 === tabIndex);
+            });
+            document.querySelectorAll('.tab-content').forEach((content, idx) => {
+                content.classList.toggle('active', idx + 1 === tabIndex);
+            });
+        }
+
+        // Função Genérica de Incremento/Decremento (+ e -)
+        function stepValue(inputId, delta) {
             const input = document.getElementById(inputId);
             let valorAtual = parseFloat(input.value) || 0;
             input.value = valorAtual + delta;
         }
 
-        document.getElementById('formulario').addEventListener('submit', function(e) {
+        // ======================= LÓGICA CALCULADORA 1 =======================
+
+        document.getElementById('form-calc1').addEventListener('submit', function(e) {
             e.preventDefault();
+            
+            const tipo = document.querySelector('input[name="c1-tipo"]:checked').value;
+            const obs = document.getElementById('c1-obs').value;
+            const alto = parseFloat(document.getElementById('c1-alto').value) || 0;
+            const medio = parseFloat(document.getElementById('c1-medio').value) || 0;
+            const baixo = parseFloat(document.getElementById('c1-baixo').value) || 0;
+            const editId = document.getElementById('c1-edit-id').value;
 
-            const tipo = document.querySelector('input[name="tipo"]:checked').value;
-            const observacao = document.getElementById('observacao').value; // Puxa o texto
-            const alto = parseFloat(document.getElementById('alto').value);
-            const medio = parseFloat(document.getElementById('medio').value);
-            const baixo = parseFloat(document.getElementById('baixo').value);
-            const editId = document.getElementById('edit-id').value;
-
-            // Fórmulas matemáticas
-            const form2x = (alto * 1.5) - (medio * 0.5) - (baixo * 2);
-            const form15x = (alto * 1) + (medio * 1) - (baixo * 2);
-            const form4x = (alto * 2) - (medio * 2) - (baixo * 2);
+            // Fórmulas
+            const f2x = (alto * 1.5) - (medio * 0.5) - (baixo * 2);
+            const f15x = (alto * 1) + (medio * 1) - (baixo * 2);
+            const f4x = (alto * 2) - (medio * 2) - (baixo * 2);
 
             const registro = {
                 id: editId ? editId : Date.now().toString(),
-                tipo,
-                observacao, // Salva o texto no objeto
-                alto,
-                medio,
-                baixo,
-                form2x,
-                form15x,
-                form4x
+                tipo, obs, alto, medio, baixo, f2x, f15x, f4x
             };
 
-            salvarRegistro(registro);
+            salvarRegistro(KEY_CALC1, registro, renderizarC1);
             
             this.reset();
-            document.getElementById('edit-id').value = '';
-            document.getElementById('btn-salvar').textContent = 'Calcular e Salvar';
-            document.querySelector('input[value="vermelho"]').checked = true;
+            document.getElementById('c1-edit-id').value = '';
+            document.getElementById('c1-btn-salvar').textContent = 'Calcular e Salvar';
+            document.querySelector('input[name="c1-tipo"][value="vermelho"]').checked = true;
         });
 
-        function salvarRegistro(novoRegistro) {
-            let registros = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-            const index = registros.findIndex(r => r.id === novoRegistro.id);
-            
-            if (index !== -1) {
-                registros[index] = novoRegistro;
-            } else {
-                registros.push(novoRegistro);
-            }
-
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(registros));
-            renderizarCards();
-        }
-
-        function renderizarCards() {
-            const container = document.getElementById('cards-container');
-            const registros = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-            
+        function renderizarC1() {
+            const container = document.getElementById('cards-container-1');
+            const registros = JSON.parse(localStorage.getItem(KEY_CALC1)) || [];
             container.innerHTML = '';
 
             registros.forEach(reg => {
                 const div = document.createElement('div');
                 div.className = `card ${reg.tipo}`;
                 
-                // Variável para exibir a observação apenas se o usuário tiver digitado algo
-                let htmlObservacao = '';
-                if(reg.observacao && reg.observacao.trim() !== '') {
-                    htmlObservacao = `<div class="observacao-texto">📝 ${reg.observacao}</div>`;
-                }
+                let htmlObs = reg.obs ? `<div class="observacao-texto">📝 ${reg.obs}</div>` : '';
 
                 div.innerHTML = `
                     <div class="card-header">
@@ -360,72 +547,243 @@
                         <small>A: ${reg.alto} | M: ${reg.medio} | B: ${reg.baixo}</small>
                     </div>
                     <div class="card-content">
-                        ${htmlObservacao}
-                        
-                        <p><strong>Fórmula 2x:</strong> (A × 1.5) - (M × 0.5) - (B × 2)</p>
-                        <p>Resultado: <strong>${reg.form2x.toFixed(2)}</strong></p>
-                        
+                        ${htmlObs}
+                        <p><strong>Fórmula 2x:</strong> ${reg.f2x.toFixed(2)}</p>
                         <hr class="divider">
-                        
-                        <p><strong>Fórmula 1.5x:</strong> (A × 1) + (M × 1) - (B × 2)</p>
-                        <p>Resultado: <strong>${reg.form15x.toFixed(2)}</strong></p>
-
+                        <p><strong>Fórmula 1.5x:</strong> ${reg.f15x.toFixed(2)}</p>
                         <hr class="divider">
-
-                        <p><strong>Fórmula 4x:</strong> (A × 2) - (M × 2) - (B × 2)</p>
-                        <p>Resultado: <strong>${reg.form4x.toFixed(2)}</strong></p>
+                        <p><strong>Fórmula 4x:</strong> ${reg.f4x.toFixed(2)}</p>
                     </div>
                     <div class="card-actions">
-                        <button class="btn-editar" onclick="editarRegistro('${reg.id}')">✏️ Editar</button>
-                        <button class="btn-excluir" onclick="excluirRegistro('${reg.id}')">🗑️ Excluir</button>
+                        <button class="btn-editar" onclick="editarC1('${reg.id}')">✏️ Editar</button>
+                        <button class="btn-excluir" onclick="excluirRegistro('${KEY_CALC1}', '${reg.id}', renderizarC1)">🗑️ Excluir</button>
                     </div>
                 `;
                 container.appendChild(div);
             });
         }
 
-        function editarRegistro(id) {
-            const registros = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-            const registro = registros.find(r => r.id === id);
-
-            if (registro) {
-                document.querySelector(`input[value="${registro.tipo}"]`).checked = true;
-                document.getElementById('observacao').value = registro.observacao || ''; // Preenche o texto
-                document.getElementById('alto').value = registro.alto;
-                document.getElementById('medio').value = registro.medio;
-                document.getElementById('baixo').value = registro.baixo;
-                document.getElementById('edit-id').value = registro.id; 
-
-                document.getElementById('btn-salvar').textContent = 'Atualizar Registro';
+        function editarC1(id) {
+            const registros = JSON.parse(localStorage.getItem(KEY_CALC1)) || [];
+            const reg = registros.find(r => r.id === id);
+            if (reg) {
+                document.querySelector(`input[name="c1-tipo"][value="${reg.tipo}"]`).checked = true;
+                document.getElementById('c1-obs').value = reg.obs || '';
+                document.getElementById('c1-alto').value = reg.alto;
+                document.getElementById('c1-medio').value = reg.medio;
+                document.getElementById('c1-baixo').value = reg.baixo;
+                document.getElementById('c1-edit-id').value = reg.id; 
+                document.getElementById('c1-btn-salvar').textContent = 'Atualizar Registro';
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
         }
 
-        function excluirRegistro(id) {
-            if(confirm("Tem certeza que deseja excluir este registro específico?")) {
-                let registros = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-                registros = registros.filter(r => r.id !== id); 
-                
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(registros));
-                renderizarCards();
+        // ======================= LÓGICA CALCULADORA 2 =======================
 
-                if (document.getElementById('edit-id').value === id) {
-                    document.getElementById('formulario').reset();
-                    document.getElementById('edit-id').value = '';
-                    document.getElementById('btn-salvar').textContent = 'Calcular e Salvar';
+        function addValorC2() {
+            const input = document.getElementById('c2-input-valor');
+            const val = parseFloat(input.value);
+            if (!isNaN(val)) {
+                calc2ValoresTemp.push(val);
+                input.value = '';
+                input.focus();
+                atualizarListaC2UI();
+            }
+        }
+
+        // Permite adicionar apertando "Enter" no input
+        document.getElementById('c2-input-valor').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addValorC2();
+            }
+        });
+
+        function removerValorC2(index) {
+            calc2ValoresTemp.splice(index, 1);
+            atualizarListaC2UI();
+        }
+
+        function atualizarListaC2UI() {
+            const container = document.getElementById('c2-lista-valores');
+            if (calc2ValoresTemp.length === 0) {
+                container.innerHTML = '<span style="color:#999; font-size:13px; margin:auto;">Nenhum valor adicionado ainda.</span>';
+                return;
+            }
+            container.innerHTML = '';
+            calc2ValoresTemp.forEach((v, index) => {
+                container.innerHTML += `<div class="tag-valor">${v.toFixed(2)} <span onclick="removerValorC2(${index})">✖</span></div>`;
+            });
+        }
+
+        document.getElementById('form-calc2').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (calc2ValoresTemp.length === 0) {
+                alert("Adicione pelo menos um valor na lista antes de calcular!");
+                return;
+            }
+
+            const tipo = document.querySelector('input[name="c2-tipo"]:checked').value;
+            const obs = document.getElementById('c2-obs').value;
+            const editId = document.getElementById('c2-edit-id').value;
+
+            // Multiplicadores solicitados: até 15, depois 20, 30, 50, 100
+            const multiplicadores = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 20, 30, 50, 100];
+            const resultados = [];
+
+            // Processa as Fórmulas para cada Múltiplo (M)
+            // Lógica: Se valor >= M (conta como Ganho / +). Se valor < M (conta como Perda / -).
+            multiplicadores.forEach(m => {
+                let nPlus = 0;
+                let nMinus = 0;
+                
+                calc2ValoresTemp.forEach(val => {
+                    if (val >= m) nPlus++;
+                    else nMinus++;
+                });
+
+                // Fórmula: [nPlus * (m - 1)] - [nMinus * 1]
+                const calculo = (nPlus * (m - 1)) - (nMinus * 1);
+                resultados.push({ mult: m, result: calculo });
+            });
+
+            const registro = {
+                id: editId ? editId : Date.now().toString(),
+                tipo,
+                obs,
+                valoresOriginais: [...calc2ValoresTemp], // Salva a cópia da lista
+                resultados
+            };
+
+            salvarRegistro(KEY_CALC2, registro, renderizarC2);
+            
+            // Reset
+            this.reset();
+            calc2ValoresTemp = [];
+            atualizarListaC2UI();
+            document.getElementById('c2-edit-id').value = '';
+            document.getElementById('c2-btn-salvar').textContent = 'Calcular Fórmulas';
+            document.querySelector('input[name="c2-tipo"][value="vermelho"]').checked = true;
+        });
+
+        function renderizarC2() {
+            const container = document.getElementById('cards-container-2');
+            const registros = JSON.parse(localStorage.getItem(KEY_CALC2)) || [];
+            container.innerHTML = '';
+
+            registros.forEach(reg => {
+                const div = document.createElement('div');
+                div.className = `card ${reg.tipo}`;
+                
+                let htmlObs = reg.obs ? `<div class="observacao-texto">📝 ${reg.obs}</div>` : '';
+                
+                // Formatação dos números inseridos (limitando tamanho visual)
+                let strValores = reg.valoresOriginais.map(v => v.toFixed(2)).join(', ');
+                if (strValores.length > 50) strValores = strValores.substring(0, 50) + '...';
+
+                // Geração da grade de resultados
+                let htmlResultados = '<div class="resultados-grid">';
+                reg.resultados.forEach(res => {
+                    let corClass = res.result > 0 ? 'res-pos' : (res.result < 0 ? 'res-neg' : 'res-zero');
+                    let sinal = res.result > 0 ? '+' : '';
+                    htmlResultados += `
+                        <div class="res-box">
+                            <strong>f${res.mult}x</strong>
+                            <span class="${corClass}">${sinal}${res.result.toFixed(2)}</span>
+                        </div>
+                    `;
+                });
+                htmlResultados += '</div>';
+
+                div.innerHTML = `
+                    <div class="card-header">
+                        <span class="tag ${reg.tipo}">${reg.tipo}</span>
+                        <small>Qtd Valores: ${reg.valoresOriginais.length}</small>
+                    </div>
+                    <div class="card-content">
+                        ${htmlObs}
+                        <p style="font-size:12px; color:#7f8c8d; margin-bottom:10px;"><strong>Lista:</strong> [${strValores}]</p>
+                        ${htmlResultados}
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn-editar" onclick="editarC2('${reg.id}')">✏️ Editar</button>
+                        <button class="btn-excluir" onclick="excluirRegistro('${KEY_CALC2}', '${reg.id}', renderizarC2)">🗑️ Excluir</button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function editarC2(id) {
+            const registros = JSON.parse(localStorage.getItem(KEY_CALC2)) || [];
+            const reg = registros.find(r => r.id === id);
+            if (reg) {
+                document.querySelector(`input[name="c2-tipo"][value="${reg.tipo}"]`).checked = true;
+                document.getElementById('c2-obs').value = reg.obs || '';
+                document.getElementById('c2-edit-id').value = reg.id; 
+                
+                // Restaura a lista
+                calc2ValoresTemp = [...reg.valoresOriginais];
+                atualizarListaC2UI();
+
+                document.getElementById('c2-btn-salvar').textContent = 'Atualizar Registro';
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        // ======================= FUNÇÕES COMPARTILHADAS =======================
+
+        function salvarRegistro(key, novoRegistro, renderCallback) {
+            let registros = JSON.parse(localStorage.getItem(key)) || [];
+            const index = registros.findIndex(r => r.id === novoRegistro.id);
+            if (index !== -1) registros[index] = novoRegistro;
+            else registros.push(novoRegistro);
+            localStorage.setItem(key, JSON.stringify(registros));
+            renderCallback();
+        }
+
+        function excluirRegistro(key, id, renderCallback) {
+            if(confirm("Tem certeza que deseja excluir este registro específico?")) {
+                let registros = JSON.parse(localStorage.getItem(key)) || [];
+                registros = registros.filter(r => r.id !== id); 
+                localStorage.setItem(key, JSON.stringify(registros));
+                renderCallback();
+
+                // Limpa form se estiver editando o mesmo
+                const formEditId = key === KEY_CALC1 ? 'c1-edit-id' : 'c2-edit-id';
+                if (document.getElementById(formEditId).value === id) {
+                    const formId = key === KEY_CALC1 ? 'form-calc1' : 'form-calc2';
+                    document.getElementById(formId).reset();
+                    document.getElementById(formEditId).value = '';
+                    if (key === KEY_CALC2) {
+                        calc2ValoresTemp = [];
+                        atualizarListaC2UI();
+                        document.getElementById('c2-btn-salvar').textContent = 'Calcular Fórmulas';
+                    } else {
+                        document.getElementById('c1-btn-salvar').textContent = 'Calcular e Salvar';
+                    }
                 }
             }
         }
 
-        function limparLocalStorage() {
-            if(confirm("Tem certeza que deseja apagar TODOS os registros salvos?")) {
-                localStorage.removeItem(STORAGE_KEY);
-                renderizarCards();
-                
-                document.getElementById('formulario').reset();
-                document.getElementById('edit-id').value = '';
-                document.getElementById('btn-salvar').textContent = 'Calcular e Salvar';
-                document.querySelector('input[value="vermelho"]').checked = true;
+        function limparStorage(calcNum) {
+            if(confirm(`Tem certeza que deseja apagar TODOS os registros da Calculadora ${calcNum}?`)) {
+                if (calcNum === 1) {
+                    localStorage.removeItem(KEY_CALC1);
+                    document.getElementById('form-calc1').reset();
+                    document.getElementById('c1-edit-id').value = '';
+                    document.getElementById('c1-btn-salvar').textContent = 'Calcular e Salvar';
+                    renderizarC1();
+                } else {
+                    localStorage.removeItem(KEY_CALC2);
+                    document.getElementById('form-calc2').reset();
+                    document.getElementById('c2-edit-id').value = '';
+                    calc2ValoresTemp = [];
+                    atualizarListaC2UI();
+                    document.getElementById('c2-btn-salvar').textContent = 'Calcular Fórmulas';
+                    renderizarC2();
+                }
             }
         }
     </script>
