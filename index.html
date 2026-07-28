@@ -37,6 +37,7 @@
         /* Sistema de Abas */
         .tabs {
             display: flex;
+            flex-wrap: wrap; /* Ajuda a não quebrar no celular */
             gap: 10px;
             margin-bottom: 25px;
             width: 100%;
@@ -45,15 +46,17 @@
 
         .tab-btn {
             flex: 1;
-            padding: 15px;
+            min-width: 120px;
+            padding: 12px 10px;
             border: none;
             background-color: #ecf0f1;
             color: #7f8c8d;
-            font-size: 16px;
+            font-size: 14px;
             font-weight: bold;
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
+            text-align: center;
         }
 
         .tab-btn:hover {
@@ -230,8 +233,9 @@
         button.main-btn:hover, button.clear-btn:hover { opacity: 0.85; }
         .bg-calc1 { background-color: #3498db; }
         .bg-calc2 { background-color: #9b59b6; }
+        .bg-calc3 { background-color: #e67e22; }
 
-        /* Lista Temporária Calc 2 */
+        /* Lista Temporária (Usada na C2 e C3) */
         .lista-temp {
             display: flex;
             flex-wrap: wrap;
@@ -360,13 +364,37 @@
         .res-neg { color: #e74c3c; font-weight: bold; }
         .res-zero { color: #7f8c8d; font-weight: bold; }
 
+        /* Análise de Sequência Calculadora 3 */
+        .box-analise {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #dfe6e9;
+            text-align: center;
+            font-size: 16px;
+            line-height: 1.8;
+            color: #34495e;
+            word-wrap: break-word;
+        }
+        .box-analise .contagem {
+            color: #7f8c8d;
+            font-size: 15px;
+        }
+        .box-analise .valor-alto {
+            color: #27ae60;
+            font-weight: bold;
+            font-size: 17px;
+            margin: 0 4px;
+        }
+
     </style>
 </head>
 <body>
 
     <div class="tabs">
         <button class="tab-btn active" onclick="switchTab(1)">Calculadora 1</button>
-        <button class="tab-btn" onclick="switchTab(2)">Calculadora 2 (Lista)</button>
+        <button class="tab-btn" onclick="switchTab(2)">Múltiplos (Lote)</button>
+        <button class="tab-btn" onclick="switchTab(3)">Análise > 2.00</button>
     </div>
 
     <div id="aba1" class="tab-content active">
@@ -377,7 +405,7 @@
 
                 <div class="form-group">
                     <label>Cor / Tipo:</label>
-                    <div class="radio-group" id="c1-cores">
+                    <div class="radio-group">
                         <label><input type="radio" name="c1-tipo" value="vermelho" checked><span class="cor-bolinha bg-vermelho"></span> Vermelho</label>
                         <label><input type="radio" name="c1-tipo" value="verde"><span class="cor-bolinha bg-verde"></span> Verde</label>
                         <label><input type="radio" name="c1-tipo" value="roxo"><span class="cor-bolinha bg-roxo"></span> Roxo</label>
@@ -435,7 +463,7 @@
 
                 <div class="form-group">
                     <label>Cor / Tipo:</label>
-                    <div class="radio-group" id="c2-cores">
+                    <div class="radio-group">
                         <label><input type="radio" name="c2-tipo" value="vermelho" checked><span class="cor-bolinha bg-vermelho"></span> Vermelho</label>
                         <label><input type="radio" name="c2-tipo" value="verde"><span class="cor-bolinha bg-verde"></span> Verde</label>
                         <label><input type="radio" name="c2-tipo" value="roxo"><span class="cor-bolinha bg-roxo"></span> Roxo</label>
@@ -453,7 +481,7 @@
                     <label>Adicionar Valor (ex: 2.50):</label>
                     <div class="input-wrapper">
                         <input type="number" id="c2-input-valor" step="0.01" placeholder="0.00">
-                        <button type="button" class="btn-add" onclick="addValorC2()">Adicionar</button>
+                        <button type="button" class="btn-add" onclick="addValor('c2')">Adicionar</button>
                     </div>
                     <div class="lista-temp" id="c2-lista-valores">
                         <span style="color:#999; font-size:13px; margin:auto;">Nenhum valor adicionado ainda.</span>
@@ -469,18 +497,65 @@
         <div class="cards-container" id="cards-container-2"></div>
     </div>
 
+    <div id="aba3" class="tab-content">
+        <div class="container">
+            <h2>Análise de Sequência (> 2.00)</h2>
+            <form id="form-calc3">
+                <input type="hidden" id="c3-edit-id" value="">
+
+                <div class="form-group">
+                    <label>Cor / Tipo:</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="c3-tipo" value="vermelho" checked><span class="cor-bolinha bg-vermelho"></span> Vermelho</label>
+                        <label><input type="radio" name="c3-tipo" value="verde"><span class="cor-bolinha bg-verde"></span> Verde</label>
+                        <label><input type="radio" name="c3-tipo" value="roxo"><span class="cor-bolinha bg-roxo"></span> Roxo</label>
+                        <label><input type="radio" name="c3-tipo" value="azul"><span class="cor-bolinha bg-azul"></span> Azul</label>
+                        <label><input type="radio" name="c3-tipo" value="rosa"><span class="cor-bolinha bg-rosa"></span> Rosa</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="c3-obs">Observação / Nome (Opcional):</label>
+                    <input type="text" id="c3-obs" placeholder="Digite uma anotação para a sequência...">
+                </div>
+
+                <div class="form-group">
+                    <label>Adicionar Valor (ex: 3, 2.2, 1, 1.4):</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="c3-input-valor" step="0.01" placeholder="0.00">
+                        <button type="button" class="btn-add" onclick="addValor('c3')">Adicionar</button>
+                    </div>
+                    <div class="lista-temp" id="c3-lista-valores">
+                        <span style="color:#999; font-size:13px; margin:auto;">Nenhum valor adicionado ainda.</span>
+                    </div>
+                </div>
+
+                <div class="botoes">
+                    <button type="submit" class="main-btn bg-calc3" id="c3-btn-salvar">Analisar Valores</button>
+                    <button type="button" class="clear-btn" onclick="limparStorage(3)">Limpar Tudo</button>
+                </div>
+            </form>
+        </div>
+        <div class="cards-container" id="cards-container-3"></div>
+    </div>
+
     <script>
         // Chaves do LocalStorage
         const KEY_CALC1 = 'registrosCalculadora1_v6';
-        const KEY_CALC2 = 'registrosCalculadora2_v2'; // Atualizado para suportar a nova matriz de fórmulas sem conflitos
+        const KEY_CALC2 = 'registrosCalculadora2_v2'; 
+        const KEY_CALC3 = 'registrosCalculadora3_v1'; // Nova Chave para a Calc 3
 
-        // Variável de estado para a lista temporária da Calculadora 2
-        let calc2ValoresTemp = [];
+        // Variáveis de estado para as listas temporárias
+        let valoresTemp = {
+            c2: [],
+            c3: []
+        };
 
         // Inicialização
         document.addEventListener('DOMContentLoaded', () => {
             renderizarC1();
             renderizarC2();
+            renderizarC3();
         });
 
         // Alternador de Abas
@@ -493,7 +568,7 @@
             });
         }
 
-        // Função Genérica de Incremento/Decremento (+ e -)
+        // Função Genérica de Incremento/Decremento (+ e -) para Calc 1
         function stepValue(inputId, delta) {
             const input = document.getElementById(inputId);
             let valorAtual = parseFloat(input.value) || 0;
@@ -512,16 +587,11 @@
             const baixo = parseFloat(document.getElementById('c1-baixo').value) || 0;
             const editId = document.getElementById('c1-edit-id').value;
 
-            // Fórmulas
             const f2x = (alto * 1.5) - (medio * 0.5) - (baixo * 2);
             const f15x = (alto * 1) + (medio * 1) - (baixo * 2);
             const f4x = (alto * 2) - (medio * 2) - (baixo * 2);
 
-            const registro = {
-                id: editId ? editId : Date.now().toString(),
-                tipo, obs, alto, medio, baixo, f2x, f15x, f4x
-            };
-
+            const registro = { id: editId || Date.now().toString(), tipo, obs, alto, medio, baixo, f2x, f15x, f4x };
             salvarRegistro(KEY_CALC1, registro, renderizarC1);
             
             this.reset();
@@ -538,7 +608,6 @@
             registros.forEach(reg => {
                 const div = document.createElement('div');
                 div.className = `card ${reg.tipo}`;
-                
                 let htmlObs = reg.obs ? `<div class="observacao-texto">📝 ${reg.obs}</div>` : '';
 
                 div.innerHTML = `
@@ -578,96 +647,79 @@
             }
         }
 
-        // ======================= LÓGICA CALCULADORA 2 =======================
+        // ======================= FUNÇÕES PARA LISTAS (C2 e C3) =======================
 
-        function addValorC2() {
-            const input = document.getElementById('c2-input-valor');
-            const val = parseFloat(input.value);
+        function addValor(calcPrefix) {
+            const input = document.getElementById(`${calcPrefix}-input-valor`);
+            let valStr = input.value.replace(',', '.'); // Permite vírgula ou ponto
+            const val = parseFloat(valStr);
+            
             if (!isNaN(val)) {
-                calc2ValoresTemp.push(val);
+                valoresTemp[calcPrefix].push(val);
                 input.value = '';
                 input.focus();
-                atualizarListaC2UI();
+                atualizarListaUI(calcPrefix);
             }
         }
 
-        // Permite adicionar apertando "Enter" no input
+        // Enter no input da C2
         document.getElementById('c2-input-valor').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                addValorC2();
-            }
+            if (e.key === 'Enter') { e.preventDefault(); addValor('c2'); }
         });
 
-        function removerValorC2(index) {
-            calc2ValoresTemp.splice(index, 1);
-            atualizarListaC2UI();
+        // Enter no input da C3
+        document.getElementById('c3-input-valor').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') { e.preventDefault(); addValor('c3'); }
+        });
+
+        function removerValor(calcPrefix, index) {
+            valoresTemp[calcPrefix].splice(index, 1);
+            atualizarListaUI(calcPrefix);
         }
 
-        function atualizarListaC2UI() {
-            const container = document.getElementById('c2-lista-valores');
-            if (calc2ValoresTemp.length === 0) {
+        function atualizarListaUI(calcPrefix) {
+            const container = document.getElementById(`${calcPrefix}-lista-valores`);
+            const lista = valoresTemp[calcPrefix];
+            if (lista.length === 0) {
                 container.innerHTML = '<span style="color:#999; font-size:13px; margin:auto;">Nenhum valor adicionado ainda.</span>';
                 return;
             }
             container.innerHTML = '';
-            calc2ValoresTemp.forEach((v, index) => {
-                container.innerHTML += `<div class="tag-valor">${v.toFixed(2)} <span onclick="removerValorC2(${index})">✖</span></div>`;
+            lista.forEach((v, index) => {
+                // Formatação simples de casa decimal
+                const displayVal = Number.isInteger(v) ? v : v.toFixed(2);
+                container.innerHTML += `<div class="tag-valor">${displayVal} <span onclick="removerValor('${calcPrefix}', ${index})">✖</span></div>`;
             });
         }
 
+        // ======================= LÓGICA CALCULADORA 2 (Múltiplos) =======================
+
         document.getElementById('form-calc2').addEventListener('submit', function(e) {
             e.preventDefault();
-            
-            if (calc2ValoresTemp.length === 0) {
-                alert("Adicione pelo menos um valor na lista antes de calcular!");
-                return;
-            }
+            if (valoresTemp.c2.length === 0) { alert("Adicione pelo menos um valor na lista!"); return; }
 
             const tipo = document.querySelector('input[name="c2-tipo"]:checked').value;
             const obs = document.getElementById('c2-obs').value;
             const editId = document.getElementById('c2-edit-id').value;
 
-            // ================= NOVIDADE: Matriz de multiplicadores expandida =================
             const multiplicadores = [
-                1.2, 1.5, 
-                2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 
-                20, 30, 50, 100, 
-                150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000
+                1.2, 1.5, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 
+                20, 30, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000
             ];
             
             const resultados = [];
-
-            // Processa as Fórmulas para cada Múltiplo (M)
-            // Lógica: Se valor >= M (conta como Ganho / +). Se valor < M (conta como Perda / -).
             multiplicadores.forEach(m => {
-                let nPlus = 0;
-                let nMinus = 0;
-                
-                calc2ValoresTemp.forEach(val => {
-                    if (val >= m) nPlus++;
-                    else nMinus++;
-                });
-
-                // Fórmula: [nPlus * (m - 1)] - [nMinus * 1]
-                const calculo = (nPlus * (m - 1)) - (nMinus * 1);
-                resultados.push({ mult: m, result: calculo });
+                let nPlus = 0, nMinus = 0;
+                valoresTemp.c2.forEach(val => { if (val >= m) nPlus++; else nMinus++; });
+                resultados.push({ mult: m, result: (nPlus * (m - 1)) - (nMinus * 1) });
             });
 
-            const registro = {
-                id: editId ? editId : Date.now().toString(),
-                tipo,
-                obs,
-                valoresOriginais: [...calc2ValoresTemp], // Salva a cópia da lista
-                resultados
-            };
-
+            const registro = { id: editId || Date.now().toString(), tipo, obs, valoresOriginais: [...valoresTemp.c2], resultados };
             salvarRegistro(KEY_CALC2, registro, renderizarC2);
             
-            // Reset
             this.reset();
-            calc2ValoresTemp = [];
-            atualizarListaC2UI();
+            valoresTemp.c2 = [];
+            atualizarListaUI('c2');
             document.getElementById('c2-edit-id').value = '';
             document.getElementById('c2-btn-salvar').textContent = 'Calcular Fórmulas';
             document.querySelector('input[name="c2-tipo"][value="vermelho"]').checked = true;
@@ -681,32 +733,21 @@
             registros.forEach(reg => {
                 const div = document.createElement('div');
                 div.className = `card ${reg.tipo}`;
-                
                 let htmlObs = reg.obs ? `<div class="observacao-texto">📝 ${reg.obs}</div>` : '';
                 
-                // Formatação dos números inseridos (limitando tamanho visual)
-                let strValores = reg.valoresOriginais.map(v => v.toFixed(2)).join(', ');
+                let strValores = reg.valoresOriginais.map(v => Number.isInteger(v) ? v : v.toFixed(2)).join(', ');
                 if (strValores.length > 50) strValores = strValores.substring(0, 50) + '...';
 
-                // Geração da grade de resultados
                 let htmlResultados = '<div class="resultados-grid">';
                 reg.resultados.forEach(res => {
                     let corClass = res.result > 0 ? 'res-pos' : (res.result < 0 ? 'res-neg' : 'res-zero');
                     let sinal = res.result > 0 ? '+' : '';
-                    htmlResultados += `
-                        <div class="res-box">
-                            <strong>f${res.mult}x</strong>
-                            <span class="${corClass}">${sinal}${res.result.toFixed(2)}</span>
-                        </div>
-                    `;
+                    htmlResultados += `<div class="res-box"><strong>f${res.mult}x</strong><span class="${corClass}">${sinal}${res.result.toFixed(2)}</span></div>`;
                 });
                 htmlResultados += '</div>';
 
                 div.innerHTML = `
-                    <div class="card-header">
-                        <span class="tag ${reg.tipo}">${reg.tipo}</span>
-                        <small>Qtd Valores: ${reg.valoresOriginais.length}</small>
-                    </div>
+                    <div class="card-header"><span class="tag ${reg.tipo}">${reg.tipo}</span><small>Qtd: ${reg.valoresOriginais.length}</small></div>
                     <div class="card-content">
                         ${htmlObs}
                         <p style="font-size:12px; color:#7f8c8d; margin-bottom:10px;"><strong>Lista:</strong> [${strValores}]</p>
@@ -728,12 +769,97 @@
                 document.querySelector(`input[name="c2-tipo"][value="${reg.tipo}"]`).checked = true;
                 document.getElementById('c2-obs').value = reg.obs || '';
                 document.getElementById('c2-edit-id').value = reg.id; 
-                
-                // Restaura a lista
-                calc2ValoresTemp = [...reg.valoresOriginais];
-                atualizarListaC2UI();
-
+                valoresTemp.c2 = [...reg.valoresOriginais];
+                atualizarListaUI('c2');
                 document.getElementById('c2-btn-salvar').textContent = 'Atualizar Registro';
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        // ======================= LÓGICA CALCULADORA 3 (Análise > 2.00) =======================
+
+        document.getElementById('form-calc3').addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (valoresTemp.c3.length === 0) { alert("Adicione pelo menos um valor na lista!"); return; }
+
+            const tipo = document.querySelector('input[name="c3-tipo"]:checked').value;
+            const obs = document.getElementById('c3-obs').value;
+            const editId = document.getElementById('c3-edit-id').value;
+
+            // Processamento da String: (Contagem <= 2.00) VALOR > 2.00 (Contagem <= 2.00) ...
+            let analiseFormatada = "";
+            let contadorMenores = 0;
+
+            valoresTemp.c3.forEach(val => {
+                if (val > 2.00) {
+                    const printVal = Number.isInteger(val) ? val : val.toFixed(2).replace('.', ',');
+                    analiseFormatada += `<span class="contagem">(${contadorMenores})</span> <span class="valor-alto">${printVal}</span> `;
+                    contadorMenores = 0;
+                } else {
+                    contadorMenores++;
+                }
+            });
+            analiseFormatada += `<span class="contagem">(${contadorMenores})</span>`;
+
+            const registro = {
+                id: editId || Date.now().toString(),
+                tipo,
+                obs,
+                valoresOriginais: [...valoresTemp.c3],
+                analiseHtml: analiseFormatada
+            };
+
+            salvarRegistro(KEY_CALC3, registro, renderizarC3);
+            
+            this.reset();
+            valoresTemp.c3 = [];
+            atualizarListaUI('c3');
+            document.getElementById('c3-edit-id').value = '';
+            document.getElementById('c3-btn-salvar').textContent = 'Analisar Valores';
+            document.querySelector('input[name="c3-tipo"][value="vermelho"]').checked = true;
+        });
+
+        function renderizarC3() {
+            const container = document.getElementById('cards-container-3');
+            const registros = JSON.parse(localStorage.getItem(KEY_CALC3)) || [];
+            container.innerHTML = '';
+
+            registros.forEach(reg => {
+                const div = document.createElement('div');
+                div.className = `card ${reg.tipo}`;
+                let htmlObs = reg.obs ? `<div class="observacao-texto">📝 ${reg.obs}</div>` : '';
+                
+                let strValores = reg.valoresOriginais.map(v => Number.isInteger(v) ? v : v.toFixed(2).replace('.', ',')).join('; ');
+                if (strValores.length > 50) strValores = strValores.substring(0, 50) + '...';
+
+                div.innerHTML = `
+                    <div class="card-header"><span class="tag ${reg.tipo}">${reg.tipo}</span><small>Qtd: ${reg.valoresOriginais.length}</small></div>
+                    <div class="card-content">
+                        ${htmlObs}
+                        <p style="font-size:12px; color:#7f8c8d; margin-bottom:10px;"><strong>Lista Original:</strong> [${strValores}]</p>
+                        <div class="box-analise">
+                            ${reg.analiseHtml}
+                        </div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn-editar" onclick="editarC3('${reg.id}')">✏️ Editar</button>
+                        <button class="btn-excluir" onclick="excluirRegistro('${KEY_CALC3}', '${reg.id}', renderizarC3)">🗑️ Excluir</button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function editarC3(id) {
+            const registros = JSON.parse(localStorage.getItem(KEY_CALC3)) || [];
+            const reg = registros.find(r => r.id === id);
+            if (reg) {
+                document.querySelector(`input[name="c3-tipo"][value="${reg.tipo}"]`).checked = true;
+                document.getElementById('c3-obs').value = reg.obs || '';
+                document.getElementById('c3-edit-id').value = reg.id; 
+                valoresTemp.c3 = [...reg.valoresOriginais];
+                atualizarListaUI('c3');
+                document.getElementById('c3-btn-salvar').textContent = 'Atualizar Registro';
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
         }
@@ -757,38 +883,46 @@
                 renderCallback();
 
                 // Limpa form se estiver editando o mesmo
-                const formEditId = key === KEY_CALC1 ? 'c1-edit-id' : 'c2-edit-id';
-                if (document.getElementById(formEditId).value === id) {
-                    const formId = key === KEY_CALC1 ? 'form-calc1' : 'form-calc2';
-                    document.getElementById(formId).reset();
-                    document.getElementById(formEditId).value = '';
-                    if (key === KEY_CALC2) {
-                        calc2ValoresTemp = [];
-                        atualizarListaC2UI();
-                        document.getElementById('c2-btn-salvar').textContent = 'Calcular Fórmulas';
-                    } else {
-                        document.getElementById('c1-btn-salvar').textContent = 'Calcular e Salvar';
-                    }
+                if (key === KEY_CALC1 && document.getElementById('c1-edit-id').value === id) {
+                    document.getElementById('form-calc1').reset();
+                    document.getElementById('c1-edit-id').value = '';
+                    document.getElementById('c1-btn-salvar').textContent = 'Calcular e Salvar';
+                } else if (key === KEY_CALC2 && document.getElementById('c2-edit-id').value === id) {
+                    document.getElementById('form-calc2').reset();
+                    document.getElementById('c2-edit-id').value = '';
+                    valoresTemp.c2 = []; atualizarListaUI('c2');
+                    document.getElementById('c2-btn-salvar').textContent = 'Calcular Fórmulas';
+                } else if (key === KEY_CALC3 && document.getElementById('c3-edit-id').value === id) {
+                    document.getElementById('form-calc3').reset();
+                    document.getElementById('c3-edit-id').value = '';
+                    valoresTemp.c3 = []; atualizarListaUI('c3');
+                    document.getElementById('c3-btn-salvar').textContent = 'Analisar Valores';
                 }
             }
         }
 
         function limparStorage(calcNum) {
-            if(confirm(`Tem certeza que deseja apagar TODOS os registros da Calculadora ${calcNum}?`)) {
+            if(confirm(`Tem certeza que deseja apagar TODOS os registros da Aba ${calcNum}?`)) {
                 if (calcNum === 1) {
                     localStorage.removeItem(KEY_CALC1);
                     document.getElementById('form-calc1').reset();
                     document.getElementById('c1-edit-id').value = '';
                     document.getElementById('c1-btn-salvar').textContent = 'Calcular e Salvar';
                     renderizarC1();
-                } else {
+                } else if (calcNum === 2) {
                     localStorage.removeItem(KEY_CALC2);
                     document.getElementById('form-calc2').reset();
                     document.getElementById('c2-edit-id').value = '';
-                    calc2ValoresTemp = [];
-                    atualizarListaC2UI();
+                    valoresTemp.c2 = []; atualizarListaUI('c2');
                     document.getElementById('c2-btn-salvar').textContent = 'Calcular Fórmulas';
                     renderizarC2();
+                } else if (calcNum === 3) {
+                    localStorage.removeItem(KEY_CALC3);
+                    document.getElementById('form-calc3').reset();
+                    document.getElementById('c3-edit-id').value = '';
+                    valoresTemp.c3 = []; atualizarListaUI('c3');
+                    document.getElementById('c3-btn-salvar').textContent = 'Analisar Valores';
+                    renderizarC3();
                 }
             }
         }
